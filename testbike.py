@@ -24,6 +24,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Load data
 hour_df = pd.read_csv('https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/hour.csv')
