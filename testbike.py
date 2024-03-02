@@ -24,37 +24,51 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
-# Load data
-hour_df = pd.read_csv('https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/hour.csv')
-day_df = pd.read_csv('https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/day.csv')
+st.title('Data Cleaning')
 
-# Data Cleaning
+# Load and clean the day dataframe
+day_df = pd.read_csv("https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/day.csv")
 day_df.rename(columns={'yr': 'year', 'mnth': 'month', 'dteday': 'Date'}, inplace=True)
 day_df['Date'] = pd.to_datetime(day_df['Date'])
 
-hour_df.rename(columns={'yr': 'year', 'mnth': 'month', 'dteday': 'Date', 'hr': 'hour'}, inplace=True)
-hour_df['Date'] = pd.to_datetime(hour_df['Date'])
-
-# Display data information
-st.title('Data Information')
+# Display the info of the day dataframe
 st.write("### Daily DataFrame")
 st.write(day_df.info())
 
+# Load and clean the hour dataframe
+hour_df = pd.read_csv("https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/hour.csv")
+hour_df.rename(columns={'yr': 'year', 'mnth': 'month', 'dteday': 'Date', 'hr': 'hour'}, inplace=True)
+hour_df['Date'] = pd.to_datetime(hour_df['Date'])
+
+# Display the info of the hour dataframe
 st.write("### Hourly DataFrame")
 st.write(hour_df.info())
 
-# Analysis of Bike Rentals by Season
+
+
+
+
+
 st.title('Analysis of Bike Rentals by Season')
 
-# Calculate total bike rentals by season
+# Read the hour.csv file
+hour_df = pd.read_csv("https://raw.githubusercontent.com/josepsamuel2003/bike/21270d607ad70169420a7809d619a1759f647e0c/hour.csv")
+
+# Define the season names
 season_names = {1: 'Spring', 2: 'Summer', 3: 'Fall', 4: 'Winter'}
+
+# Add a new column 'season_name' to identify the season
 hour_df['season_name'] = hour_df['season'].map(season_names)
+
+# Group by season_name and calculate total bike rentals
 rentals_by_season = hour_df.groupby('season_name')['cnt'].sum()
 
-# Plot rentals by season
-st.bar_chart(rentals_by_season)
+# Define colors for the bar plot
+colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
+
+# Plot the bar chart for rentals by season
+st.bar_chart(rentals_by_season, use_container_width=True)
 plt.title('Comparison of Bike Rentals by Season')
 plt.xlabel('Season')
 plt.ylabel('Number of Rentals')
@@ -62,13 +76,13 @@ plt.xticks(rotation=45)
 plt.grid(axis='y')
 st.pyplot()
 
-# Conclusion
+# Display the analysis conclusion
 st.markdown("""
-**Conclusion:**
+*Conclusion:*
 
 Yes, the difference in seasons affects bike rentals. 
 
-*Reasons:*
+Reasons:
 - Weather: In spring and summer, the weather is usually sunny and warm, motivating people to ride bikes.
 - Outdoor Activities: Spring and summer are often associated with more outdoor activities, and biking is a popular choice.
 - Holidays: Spring and summer have more holidays, such as Eid al-Fitr and Christmas, which encourage people to bike with family and friends.
@@ -76,10 +90,11 @@ Yes, the difference in seasons affects bike rentals.
 """)
 
 # Calculate and visualize the number of casual and registered bike users by season
-users_by_season = hour_df.groupby('season_name')['casual', 'registered'].sum()
+grouped_season = hour_df.groupby('season_name')
+users_by_season = grouped_season['casual', 'registered'].sum()
 
-# Plot users by season
-st.bar_chart(users_by_season)
+# Plot the bar chart for users by season
+st.bar_chart(users_by_season, use_container_width=True)
 plt.title('Number of Casual and Registered Bike Users by Season')
 plt.xlabel('Season')
 plt.ylabel('Number of Bike Users')
@@ -87,6 +102,6 @@ plt.xticks(rotation=45)
 plt.grid(axis='y')
 st.pyplot()
 
-# Display user count by season
-st.write("**Number of Casual and Registered Bike Users by Season:**")
+# Display the user count by season
+st.write("*Number of Casual and Registered Bike Users by Season:*")
 st.write(users_by_season)
